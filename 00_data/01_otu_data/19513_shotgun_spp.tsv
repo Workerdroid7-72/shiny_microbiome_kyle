@@ -1,0 +1,14 @@
+#OTU ID	ESSE.222.0417	ESSE.222.0420	ESSE.222.0418	ESSE.222.0419	ESSE.222.0421	ESSE.222.0422	ESSE.222.0423
+d__Bacteria;p__Actinobacteriota;o__Actinomycetales;f__Micrococcaceae;g__Kocuria;s__Kocuria marina	0.000000	0.000000	0.000000	0.000000	0.000000	0.255895	0.000000
+d__Bacteria;p__Actinobacteriota;o__Actinomycetales;f__Micrococcaceae;g__Kocuria;s__Kocuria marina_A	0.000000	0.000000	0.000000	0.000000	0.000000	0.201724	0.000000
+d__Bacteria;p__Firmicutes;o__Bacillales_B;f__Bacillaceae_C;g__Weizmannia;s__Weizmannia coagulans_A	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.000100
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Lacticaseibacillus;s__Lacticaseibacillus rhamnosus	0.000000	0.000000	0.000000	0.000000	1.000000	0.542381	0.906337
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Lactiplantibacillus;s__Lactiplantibacillus plantarum	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.065222
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Lactobacillus;s__Lactobacillus acidophilus	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.009600
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Lactobacillus;s__Lactobacillus crispatus	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.001560
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Limosilactobacillus;s__Limosilactobacillus reuteri	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.002970
+d__Bacteria;p__Firmicutes;o__Lactobacillales;f__Lactobacillaceae;g__Limosilactobacillus;s__Limosilactobacillus reuteri_D	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.002750
+d__Bacteria;p__Firmicutes;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus;s__Staphylococcus epidermidis	0.000000	0.000000	0.000000	0.000000	0.000000	0.000000	0.011460
+d__Bacteria;p__Proteobacteria;o__Enterobacterales;f__Enterobacteriaceae;g__Enterobacter;s__Enterobacter cloacae_Q	0.229155	0.227122	0.225695	0.251305	0.000000	0.000000	0.000000
+d__Bacteria;p__Proteobacteria;o__Enterobacterales;f__Enterobacteriaceae;g__Enterobacter;s__Enterobacter hormaechei	0.299156	0.304343	0.279816	0.282016	0.000000	0.000000	0.000000
+d__Bacteria;p__Proteobacteria;o__Enterobacterales;f__Enterobacteriaceae;g__Enterobacter;s__Enterobacter hormaechei_A	0.471689	0.468535	0.494490	0.466679	0.000000	0.000000	0.000000

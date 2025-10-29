@@ -1,0 +1,66 @@
+internal_id,sample_lable,raw_reads,paired_end,Reads Surviving(%),Reads Dropped(%),Low_Diversity_Reads,Host_Reads(%),Corrected ID with dash,Description,Description1,Description2,Description3
+zr9819_1,ESSE.222.0262,19430558,PE,87.36,12.63,,,ESSE-222-0262,Facial swab,Experiment,,Trevor 
+zr10732_18,ESSE.222.0338,33919374,PE,80.88,19.11,,,ESSE-222-0338,Facial swab,Experiment,,Second Shotgun sequence Trevor - using a wet swab (RO)
+zr15007_18,ESSE.222.2905,36784475,PE,94.46999999999998,5.53,,,ESSE-222-2905,Lab swab,Experiment,Identification,Contaminated Products
+zr19513_14,ESSE.222.0417,10466266,PE,82.585,0,107114,,ESSE-222-0417,Lab swab,Experiment,Identification,Maike Samples
+zr19513_15,ESSE.222.0420,14290033,PE,81.13499999999999,0,114485,,ESSE-222-0420,Lab swab,Experiment,Identification,Maike Samples
+zr19513_16,ESSE.222.0418,16141066,PE,80.00999999999999,0,127037,,ESSE-222-0418,Lab swab,Experiment,Identification,Maike Samples
+zr19513_17,ESSE.222.0419,11556344,PE,81.02999999999999,0,108944,,ESSE-222-0419,Lab swab,Experiment,Identification,Maike Samples
+zr19513_18,ESSE.222.0421,45134567,PE,78.105,0,262751,,ESSE-222-0421,Lab swab,Experiment,Identification,Nontando Samples
+zr19513_19,ESSE.222.0422,10763435,PE,81.94,0,116605,,ESSE-222-0422,Lab swab,Experiment,Identification,Nontando Samples
+zr19513_20,ESSE.222.0423,19379917,PE,81.57,0,155957,,ESSE-222-0423,Lab swab,Experiment,Identification,Nontando Samples
+zr20958_1,ESSE.222.0472,10860346,PE,60.51,,87593,8.62,ESSE-222-0472,Facial swab,Experiment,Husna microneedling trial,2Control
+zr20958_2,ESSE.222.0486,15166337,PE,61.14,,174037,20.2,ESSE-222-0486,Facial swab,Experiment,Husna microneedling trial,3Control
+zr20958_3,ESSE.222.0471,13316290,PE,60.88,,70039,70.91,ESSE-222-0471,Facial swab,Experiment,Husna microneedling trial,4Control
+zr20958_4,ESSE.222.0484,16074267,PE,59.6,,352669,17.87,ESSE-222-0484,Facial swab,Experiment,Husna microneedling trial,5Control
+zr20958_5,ESSE.222.0492,14525249,PE,61.995,,206097,66.32,ESSE-222-0492,Facial swab,Experiment,Husna microneedling trial,6Serum
+zr20958_6,ESSE.222.0480,10794234,PE,58.295,,89586,15.81,ESSE-222-0480,Facial swab,Experiment,Husna microneedling trial,7Serum
+zr20958_7,ESSE.222.0482,15320862,PE,63.67,,34961,97.23,ESSE-222-0482,Facial swab,Experiment,Husna microneedling trial,8Serum
+zr20958_8,ESSE.222.0466,16245654,PE,67.445,,424765,22.93,ESSE-222-0466,Facial swab,Experiment,Husna microneedling trial,9Serum
+zr20958_9,ESSE.222.0469,13546092,PE,60.945,,65659,40.86,ESSE-222-0469,Facial swab,Experiment,Husna microneedling trial,10Serum
+zr20958_10,ESSE.222.0475,16870314,PE,58.845,,905810,85.84,ESSE-222-0475,Facial swab,Experiment,Husna microneedling trial,11Control
+zr20958_11,ESSE.222.0487,22143755,PE,60.42,,699482,11.9,ESSE-222-0487,Facial swab,Experiment,Husna microneedling trial,2Control
+zr20958_12,ESSE.222.0476,14808470,PE,57.445,,130890,26.48,ESSE-222-0476,Facial swab,Experiment,Husna microneedling trial,3Control
+zr20958_13,ESSE.222.0493,18451456,PE,64.825,,523828,71.76,ESSE-222-0493,Facial swab,Experiment,Husna microneedling trial,4Control
+zr20958_14,ESSE.222.0488,14145735,PE,58.145,,242154,39.23,ESSE-222-0488,Facial swab,Experiment,Husna microneedling trial,5Control
+zr20958_15,ESSE.222.0468,21676978,PE,59.81,,490695,50.55,ESSE-222-0468,Facial swab,Experiment,Husna microneedling trial,6Serum
+zr20958_16,ESSE.222.0478,10726493,PE,58.58,,64019,48.52,ESSE-222-0478,Facial swab,Experiment,Husna microneedling trial,7Serum
+zr20958_17,ESSE.222.0489,13123424,PE,61.785,,56102,94.58,ESSE-222-0489,Facial swab,Experiment,Husna microneedling trial,8Serum
+zr20958_18,ESSE.222.0479,10652683,PE,68.965,,14230,94.82,ESSE-222-0479,Facial swab,Experiment,Husna microneedling trial,9Serum
+zr20958_19,ESSE.222.0467,15170194,PE,69.575,,32256,89.16,ESSE-222-0467,Facial swab,Experiment,Husna microneedling trial,10Serum
+zr20958_20,ESSE.222.0481,19126033,PE,55.26,,255222,94.5,ESSE-222-0481,Facial swab,Experiment,Husna microneedling trial,11Control
+zr20958_21,ESSE.222.0490,20062671,PE,63.71,,416412,82.89,ESSE-222-0490,Facial swab,Experiment,Husna microneedling trial,2Control
+zr20958_22,ESSE.222.0474,1835617,PE,49.65,,1465644,5.12,ESSE-222-0474,Facial swab,Experiment,Husna microneedling trial,3Control
+zr20958_23,ESSE.222.0483,34590307,PE,62.885,,1242628,43.77,ESSE-222-0483,Facial swab,Experiment,Husna microneedling trial,4Control
+zr20958_24,ESSE.222.0485,17187820,PE,61.37,,212630,20.74,ESSE-222-0485,Facial swab,Experiment,Husna microneedling trial,5Control
+zr20958_25,ESSE.222.0465,13183997,PE,58.86,,58035,80.9,ESSE-222-0465,Facial swab,Experiment,Husna microneedling trial,6Serum
+zr20958_26,ESSE.222.0477,12178956,PE,58.47,,130434,16.18,ESSE-222-0477,Facial swab,Experiment,Husna microneedling trial,7Serum
+zr20958_27,ESSE.222.0491,13429581,PE,68.515,,26859,96.38,ESSE-222-0491,Facial swab,Experiment,Husna microneedling trial,8Serum
+zr20958_28,ESSE.222.0464,11886593,PE,56.93,,81607,17.62,ESSE-222-0464,Facial swab,Experiment,Husna microneedling trial,9Serum
+zr20958_29,ESSE.222.0470,14740548,PE,70.11,,61988,68.66,ESSE-222-0470,Facial swab,Experiment,Husna microneedling trial,10Serum
+zr20958_30,ESSE.222.0473,2579728,PE,48.485,,2205023,11.29,ESSE-222-0473,Facial swab,Experiment,Husna microneedling trial,11Control
+zr25734_12,ESSE.222.501,12717423,PE,71.42,,24734,99.43,ESSE-222-0501,Facial swab,Experiment,,Alicia swab Flare up 
+zr25734_13,ESSE.222.502,16682420,PE,45.435,,74869,37.56,ESSE-222-0502,Facial swab,Experiment,Microbiome Transfer,Trevor Shotgun Sequencing 09/06/2025
+zr25734_14,ESSE.222.504,15287650,PE,54.48,,59616,35.83,ESSE-222-0504,Facial swab,Experiment,Bacilus coagulans trial,Daena 4 weeks
+zr25734_15,ESSE.222.505,13488905,PE,53.230000000000004,,31197,59.35,ESSE-222-0505,Facial swab,Experiment,Bacilus coagulans trial,Tara 2 weeks
+zr25734_16,ESSE.222.506,15047971,PE,42.205,,67733,73.29,ESSE-222-0506,Facial swab,Experiment,Bacilus coagulans trial,Claire 2 Weeks
+zr25734_17,ESSE.222.507,10836588,PE,54.474999999999994,,43216,43.22,ESSE-222-0507,Facial swab,Experiment,Bacilus coagulans trial,Daena 2 Weeks
+zr25734_18,ESSE.222.510,25930931,PE,46.98,,356202,21.83,ESSE-222-0510,Facial swab,Experiment,Bacilus coagulans trial,Marcella 2 weeks
+zr25734_20,ESSE.222.512,12978293,PE,47.94499999999999,,55219,77.97,ESSE-222-0512,Facial swab,Experiment,Bacilus coagulans trial,Marcella Baseline
+zr25734_21,ESSE.222.513,17363521,PE,46.03000000000001,,54397,40.36,ESSE-222-0513,Facial swab,Experiment,Bacilus coagulans trial,Tara Baseline
+zr25734_22,ESSE.222.514,20786990,PE,50.61000000000001,,353903,80.57,ESSE-222-0514,Facial swab,Experiment,Bacilus coagulans trial,Claire Baseline
+zr25734_23,ESSE.222.515,19856775,PE,44.145,,157065,44.94,ESSE-222-0515,Facial swab,Experiment,Bacilus coagulans trial,Daena Baseline
+zr25734_24,ESSE.222.517,18589886,PE,45.3,,98076,55.98,ESSE-222-0517,Facial swab,Experiment,Hypochlorous trial ,Kyle Baseline 
+zr25734_25,ESSE.222.518,16597588,PE,47.15,,32830,94.74,ESSE-222-0518,Facial swab,Experiment,Hypochlorous trial ,Luke Baseline
+zr25734_26,ESSE.222.519,19375882,PE,45.815,,174460,58.24,ESSE-222-0519,Facial swab,Experiment,Hypochlorous trial ,Kyle 2 weeks
+zr25734_27,ESSE.222.520,21561257,PE,49.4,,198272,81.97,ESSE-222-0520,Facial swab,Experiment,Hypochlorous trial ,Luke 2 weeks
+zr25734_32,ESSE.222.525,19966599,PE,57.385,,905600,80.72,ESSE-222-0525,Facial swab,Experiment,Bacilus coagulans trial,Claire 4 weeks
+zr25734_33,ESSE.222.526,16537793,PE,46.43,,51983,57.65,ESSE-222-0526,Facial swab,Experiment,Bacilus coagulans trial,Tara 4 weeks
+zr25734_34,ESSE.222.527,16985170,PE,45.16,,47499,89.47,ESSE-222-0527,Facial swab,Experiment,Bacilus coagulans trial,Marcella 4 weeks
+zr25734_35,ESSE.222.528,8770113,PE,69.69,,43449,0,ESSE-222-0528,Lab swab,Experiment,Identification,Maike Personal Isolate 
+zr25734_36,ESSE.222.529,9735234,PE,69.58000000000001,,46731,0,ESSE-222-0529,Lab swab,Experiment,Identification,Maike Personal Isolate 
+zr25734_37,ESSE.222.530,10653077,PE,70.145,,50095,0,ESSE-222-0530,Lab swab,Experiment,Identification,Maike Personal Isolate 
+zr25734_38,ESSE.222.531,9599243,PE,71.11500000000001,,256012,0,ESSE-222-0531,Lab swab,Experiment,Identification,Maike Personal Isolate 
+zr25734_39,ESSE.222.532,10496706,PE,69.07,,130079,0,ESSE-222-0532,Lab swab,Experiment,Identification,Kocuria Lab Skin Isolate for whole genome
+zr25734_40,ESSE.222.548,21397990,PE,39.865,,142738,18.7,ESSE-222-0548,Back swab,Experiment,Microbiome Transfer,Trevor Back Swab Repopulate experiment
+zr25734_41,ESSE.222.555,10664583,PE,70.44500000000001,,162127,0,ESSE-222-0555,Lab swab,Experiment,Identification,BC WeCare Isolate

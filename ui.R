@@ -1,34 +1,37 @@
 # ui.R
-source("global.R", local = TRUE)
-
-# Define the theme
-my_theme <- bs_theme(
-  version = 5,
-  bg = "#FFFFFF",
-  fg = "#000000",
-  primary = "#2C3E50",
-  secondary = "#18BC9C"
-)
+source("01_modules/sample_explorer.R")
+source("01_modules/experiment_aggregator.R")
+source("01_modules/file_downloader.R")
 
 ui <- page_navbar(
-  theme = my_theme,
   title = "Microbiome Data Explorer",
-  
-  # Tab 1: Individual Samples
-  nav_panel(
-    "Individual Samples",
-    individual_samples_ui("individual_samples")
+  theme = bslib::bs_theme(
+    version = 5,
+    bootswatch = "flatly",  # Choose your preferred theme
+    primary = "#2c3e50",
+    secondary = "#34495e"
   ),
   
-  # Tab 2: Experiment Analysis
   nav_panel(
-    "Experiment Analysis", 
-    experiment_analysis_ui("experiment_analysis")
+    "Sample Explorer",
+    sample_explorer_ui("sample_tab")
   ),
   
-  # Tab 3: File Downloads
   nav_panel(
-    "Data Download",
-    data_download_ui("data_download")
+    "Experiment Aggregator", 
+    experiment_aggregator_ui("experiment_tab")
+  ),
+  
+  nav_panel(
+    "Download Data",
+    file_downloader_ui("download_tab")
+  ),
+  
+  # Optional: Add footer or additional info
+  footer = div(
+    class = "text-center p-3",
+    "Microbiome Data Explorer | Built with R Shiny",
+    br(),
+    "© 2025 Keith Goddard"
   )
 )

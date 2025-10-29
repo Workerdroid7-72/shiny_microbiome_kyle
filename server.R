@@ -1,9 +1,16 @@
 # server.R
-source("global.R", local = TRUE)
-
 server <- function(input, output, session) {
+  # Load your phyloseq object here
+  # For example:
+  # physeq_obj <- reactive({
+  #   readRDS("data/your_phyloseq_object.rds")
+  # })
+  
+  # For this example, I'll assume you have your physeq_obj available
+  # You may want to make it reactive if loading from file
+  
   # Call module servers
-  individual_samples_server("individual_samples", ps)
-  experiment_analysis_server("experiment_analysis", ps)
-  data_download_server("data_download", ps)
+  callModule(sample_explorer_server, "sample_tab", physeq_obj)
+  callModule(experiment_aggregator_server, "experiment_tab", physeq_obj)
+  callModule(file_downloader_server, "download_tab", physeq_obj)
 }

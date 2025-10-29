@@ -1,24 +1,21 @@
 # global.R
+# Load required packages
 library(shiny)
 library(bslib)
-library(tidyverse)
-library(DT)
-library(plotly)
 library(phyloseq)
-library(reshape2)
+library(dplyr)
+library(tibble)
+library(plotly)
+library(ggplot2)
+library(DT)
+library(readr)
+library(data.table)
 
+# Define taxonomic levels
+TAX_LEVELS <- c("Order" = "Order", "Family" = "Family", "Genus" = "Genus")
 
-# Load the phyloseq object
-#ps <- load_phyloseq_data()
-
-# Global variables
-taxonomic_levels <- c("Order", "Family", "Genus")
-experiments <- unique(sample_data(ps)$Experiment)
-
-# Source helper functions
-source("01_helpers/data_helpers.R")
-
-# Source modules
-source("01_modules/individual_samples.R")
-source("01_modules/experiment_analysis.R")
-source("01_modules/data_download.R")
+# Define your phyloseq object (replace with your actual object)
+ps <- readRDS("01_cleaned_data/phyloseq_object.rds")
+our_sample_table <- phyloseq::sample_data(ps)
+our_taxonomic_table <- phyloseq::tax_table(ps)
+our_otu_table <- phyloseq::otu_table(ps)
