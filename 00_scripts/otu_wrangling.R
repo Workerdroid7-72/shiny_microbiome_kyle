@@ -296,9 +296,24 @@ swab_df <- merged_metadata %>%
   as.data.frame() %>%              # Convert tibble to plain data frame
   column_to_rownames("otu_id")
 
-swab_df <- as.data.frame(merged_metadata)
 #we have a duplicate row for ESSE.222.0032
 write_csv(swab_df, "00_data/03_cleaned_data/sample_table.csv")
 
 
+# now create the RDS from all of the above
 
+otu_mat <- as.matrix(otu_df)
+class(otu_mat) <- "numeric"
+otu_rel <- phyloseq::otu_table(otu_mat, taxa_are_rows = TRUE)
+
+
+tax_mat <- as.matrix(for_tax_df_unique)
+tax_phy <- phyloseq::tax_table(tax_mat)
+
+sample_phy <- phyloseq::sample_data(swab_df)
+
+
+microbiome_phyloseq_obj <- phyloseq::phyloseq(otu_rel, tax_phy, sample_phy)
+
+##SAVE this now
+saveRDS(microbiome_phyloseq_obj, file = "00_data/03_cleaned_data/phyloseq_object.rds")

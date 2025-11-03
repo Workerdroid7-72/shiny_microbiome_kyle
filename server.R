@@ -1,16 +1,12 @@
 # server.R
+# server.R
+source("01_modules/taxon_explorer.R")
+source("01_modules/sample_explorer.R")
+source("01_modules/experiment_explorer.R")
+
 server <- function(input, output, session) {
-  # Load your phyloseq object here
-  # For example:
-  # physeq_obj <- reactive({
-  #   readRDS("data/your_phyloseq_object.rds")
-  # })
-  
-  # For this example, I'll assume you have your physeq_obj available
-  # You may want to make it reactive if loading from file
-  
-  # Call module servers
-  callModule(sample_explorer_server, "sample_tab", physeq_obj)
-  callModule(experiment_aggregator_server, "experiment_tab", physeq_obj)
-  callModule(file_downloader_server, "download_tab", physeq_obj)
+  # Pass the phyloseq object to each module
+  taxon_explorer_server("taxon", ps = ps)
+  sample_explorer_server("sample", ps = ps)
+  experiment_explorer_server("experiment", ps = ps)
 }

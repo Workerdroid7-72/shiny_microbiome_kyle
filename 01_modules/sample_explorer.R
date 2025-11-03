@@ -1,135 +1,115 @@
 # modules/sample_explorer.R
+
 sample_explorer_ui <- function(id) {
   ns <- NS(id)
   
-  tagList(
-    fluidRow(
-      column(3,
-             card(
-               title = "Filters",
-               selectInput(
-                 ns("tax_level"),
-                 "Taxonomic Level:",
-                 choices = TAX_LEVELS,
-                 selected = "Genus"
-               ),
-               selectInput(
-                 ns("sample_id"),
-                 "Select Sample:",
-                 choices = NULL  # Will be populated by server
-               ),
-               sliderInput(
-                 ns("top_n"),
-                 "Show Top N taxa:",
-                 min = 5, max = 50, value = 10
-               )
-             )
+  layout_sidebar(
+    sidebar = sidebar(
+      width = 280,
+      textInput(ns("sample_id"), "Enter 4-digit Sample ID:", value = ""),
+      selectInput(
+        ns("tax_level"), 
+        "Taxonomic Level:", 
+        choices = c("Family", "Genus", "Species")
       ),
-      column(9,
-             card(
-               title = "Sample Abundance Data",
-               DT::dataTableOutput(ns("abundance_table")),
-               downloadButton(ns("download_table"), "Download Table")
-             )
-      )
+      selectInput(
+        ns("top_n"), 
+        "Show top taxa:", 
+        choices = c("Top 5" = 5, "Top 10" = 10, "Top 20" = 20),  # ✅ Updated choices
+        selected = 10  # ✅ Default to "Top 10"
+      ),
+      actionButton(ns("go"), "Show Results", class = "btn-primary")
+      
     ),
-    card(
-      title = "Abundance Visualization",
-      plotlyOutput(ns("abundance_plot"))
-    )
+    plotOutput(ns("taxa_plot")),
+    DTOutput(ns("taxa_table"))
   )
+  
 }
 
-sample_explorer_server <- function(input, output, session, physeq_obj) {
-  ns <- session$ns
-  
-  # Reactive: Get available samples
-  available_samples <- reactive({
-    # Assuming physeq_obj is available
-    sample_names(physeq_obj())
-  })
-  
-  # Update sample selector
-  observe({
-    updateSelectInput(
-      session,
-      "sample_id",
-      choices = available_samples(),
-      selected = if(length(available_samples()) > 0) available_samples()[1] else NULL
-    )
-  })
-  
-  # Reactive: Get abundance data for selected sample
-  sample_abundance_data <- reactive({
-    req(input$sample_id, input$tax_level, physeq_obj())
+sample_explorer_server <- function(id, ps) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     
-    # Extract abundance data for selected sample
-    otu_mat <- otu_table(physeq_obj())
-    tax_mat <- tax_table(physeq_obj())
-    
-    # Get data for selected sample
-    sample_data <- as.numeric(otu_mat[, input$sample_id])
-    
-    # Create data frame with taxonomy
-    df <- data.frame(
-      Taxon = rownames(tax_mat),
-      Abundance = sample_data,
-      stringsAsFactors = FALSE
-    )
-    
-    # Add taxonomic level
-    df$Level <- tax_mat[, input$tax_level]
-    
-    # Aggregate by taxonomic level
-    result <- df %>%
-      group_by(Level) %>%
-      summarise(Abundance = sum(Abundance), .groups = 'drop') %>%
-      filter(Level != "", !is.na(Level)) %>%
-      arrange(desc(Abundance))
-    
-    # Limit to top N
-    result <- head(result, input$top_n)
-    
-    return(result)
-  })
-  
-  # Output: Abundance table
-  output$abundance_table <- DT::renderDataTable({
-    req(sample_abundance_data())
-    
-    sample_abundance_data() %>%
-      DT::datatable(
-        options = list(
-          pageLength = 15,
-          lengthMenu = list(c(10, 15, 25, -1), c(10, 15, 25, "All"))
-        )
+    sample_taxa <- eventReactive(input$go, {
+      short_id <- input$sample_id
+      
+      # Validate: must be 4 digits
+      if (nchar(short_id) != 4 || !grepl("^[0-9]{4}$", short_id)) {
+        showNotification("Please enter exactly 4 digits (e.g., 1234).", type = "warning")
+        return(NULL)
+      }
+      
+      # 🔑 Reconstruct full sample ID
+      full_id <- paste0("ESSE.222.", short_id)
+      
+      # Check if full_id exists in phyloseq object
+      if (!full_id %in% sample_names(ps)) {
+        showNotification(paste("Sample", full_id, "not found!"), type = "error")
+        return(NULL)
+      }
+      
+      # Get counts for this sample
+      sample_otu <- otu_table(ps)[, full_id, drop = FALSE]
+      tax_df <- as.data.frame(tax_table(ps))
+      
+      # Merge OTU + taxonomy
+      df <- data.frame(
+        taxon = rownames(sample_otu),
+        count = as.numeric(sample_otu[, 1]),
+        stringsAsFactors = FALSE
       )
-  })
-  
-  # Output: Abundance plot
-  output$abundance_plot <- renderPlotly({
-    req(sample_abundance_data())
+      df <- cbind(df, tax_df[match(df$taxon, rownames(tax_df)), , drop = FALSE])
+      
+      # Handle missing taxonomy gracefully
+      df[is.na(df)] <- ""
+      
+      # Create display label based on taxonomic level
+      if (input$tax_level == "Species") {
+        # Combine Genus and Species, but handle cases where Genus is missing
+        df$display_label <- trimws(paste(df$Genus, df$Species))
+        # Optional: clean up if both are empty or just whitespace
+        df$display_label[df$display_label == ""] <- "Unknown"
+        group_var <- "display_label"
+      } else {
+        group_var <- input$tax_level
+        df$display_label <- df[[group_var]]
+      }
+      
+      # Aggregate by display_label
+      df_agg <- df %>%
+        group_by(display_label) %>%
+        summarise(count = sum(count), .groups = "drop") %>%
+        filter(display_label != "" & !is.na(display_label)) %>%
+        arrange(desc(count))
+      
+      # Top N
+      df_agg <- head(df_agg, as.numeric(input$top_n))
+      
+      # Rename column for consistency in plot/table labels
+      colnames(df_agg)[colnames(df_agg) == "display_label"] <- input$tax_level
+      
+      df_agg
+    })
     
-    p <- ggplot(sample_abundance_data(), aes(x = reorder(Level, Abundance), y = Abundance)) +
-      geom_col(fill = "#3498db", alpha = 0.7) +
-      coord_flip() +
-      labs(
-        title = paste("Abundance at", input$tax_level, "Level"),
-        x = input$tax_level,
-        y = "Abundance"
-      ) +
-      theme_minimal()
+    output$taxa_plot <- renderPlot({
+      req(sample_taxa())
+      
+      ggplot(sample_taxa(), aes(x = reorder(!!sym(input$tax_level), count), y = count)) +
+        geom_col(fill = "#45B29D") +
+        coord_flip() +
+        labs(
+          x = ifelse(input$tax_level == "Species", "Genus Species", input$tax_level),
+          y = "Relative Abundance",
+          title = paste("Top Taxa in Sample")
+        ) +
+        theme_minimal()
+    })
     
-    ggplotly(p, tooltip = c("x", "y"))
+    output$taxa_table <- renderDT({
+      req(sample_taxa())
+      datatable(sample_taxa(), options = list(pageLength = 10)) %>%
+        formatRound(columns = "count", digits = 4)
+    })
   })
-  
-  # Download handler
-  output$download_table <- downloadHandler(
-    filename = function() {
-      paste("sample_abundance_", input$sample_id, "_", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write.csv(sample_abundance_data(), file, row.names = FALSE)
-    }
-  )
 }
