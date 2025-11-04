@@ -1,5 +1,5 @@
-# ui.R
-# ui.R
+# 1. Load packages (usually from global.R)
+source("global.R")
 source("01_modules/taxon_explorer.R")
 source("01_modules/sample_explorer.R")
 source("01_modules/experiment_explorer.R")
@@ -27,3 +27,13 @@ ui <- page_navbar(
   
   
 )
+
+server <- function(input, output, session) {
+  # Pass the phyloseq object to each module
+  taxon_explorer_server("taxon", ps = ps)
+  sample_explorer_server("sample", ps = ps)
+  experiment_explorer_server("experiment", ps = ps)
+}
+
+
+shinyApp(ui = ui, server = server)
