@@ -1,4 +1,4 @@
-# modules/sample_explorer.R
+# sample_explorer.R
 
 sample_explorer_ui <- function(id) {
   ns <- NS(id)
@@ -26,6 +26,7 @@ sample_explorer_ui <- function(id) {
   )
   
 }
+
 
 sample_explorer_server <- function(id, ps) {
   moduleServer(id, function(input, output, session) {
@@ -86,6 +87,9 @@ sample_explorer_server <- function(id, ps) {
       # Top N
       df_agg <- head(df_agg, as.numeric(input$top_n))
       
+      # Store the taxonomic level used for this result
+      df_agg$used_tax_level <- input$tax_level
+      
       # Rename column for consistency in plot/table labels
       colnames(df_agg)[colnames(df_agg) == "display_label"] <- input$tax_level
       
@@ -94,6 +98,16 @@ sample_explorer_server <- function(id, ps) {
     
     output$taxa_plot <- renderPlot({
       req(sample_taxa())
+      
+      # Use the taxonomic level that was used when the data was generated
+      current_tax_level <- sample_taxa()$used_tax_level[1]  # All rows have the same level
+      
+      # If current_tax_level is NULL or different from input$tax_level, don't render
+      # Only render if the tax level matches what was used to generate the data
+      if(is.null(current_tax_level) || current_tax_level != input$tax_level) {
+        # Don't render anything until the button is pressed again
+        return(NULL)
+      }
       
       ggplot(sample_taxa(), aes(x = reorder(!!sym(input$tax_level), count), y = count)) +
         geom_col(fill = "#45B29D") +
@@ -108,6 +122,15 @@ sample_explorer_server <- function(id, ps) {
     
     output$taxa_table <- renderDT({
       req(sample_taxa())
+      
+      # Only render if the tax level matches what was used to generate the data
+      current_tax_level <- sample_taxa()$used_tax_level[1]  # All rows have the same level
+      
+      if(is.null(current_tax_level) || current_tax_level != input$tax_level) {
+        # Return an empty table until the button is pressed again
+        return(datatable(data.frame(), options = list(pageLength = 10)))
+      }
+      
       datatable(sample_taxa(), options = list(pageLength = 10)) %>%
         formatRound(columns = "count", digits = 4)
     })
