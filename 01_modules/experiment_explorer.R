@@ -248,9 +248,17 @@ experiment_explorer_server <- function(id, ps) {
       
       datatable(
         df_clean,
-        options = list(pageLength = min(10, nrow(df_clean)), scrollX = TRUE),
+        options = list(
+          dom = 'Bfrtip',
+          lengthChange = FALSE
+        ),
         rownames = FALSE
-      )
+      ) %>%
+        formatRound(
+          columns = "relative_abundance", 
+          digits = 4,
+          mark = ""  # optional: removes thousands separators if present
+        )
     })
     
   })

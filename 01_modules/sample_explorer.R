@@ -131,7 +131,9 @@ sample_explorer_server <- function(id, ps) {
         return(datatable(data.frame(), options = list(pageLength = 10)))
       }
       
-      datatable(sample_taxa(), options = list(pageLength = 10)) %>%
+      datatable(sample_taxa(), options = list(
+        dom = 'Bfrtip'  # removed 'l'
+      )) %>%
         formatRound(columns = "count", digits = 4)
     })
   })
