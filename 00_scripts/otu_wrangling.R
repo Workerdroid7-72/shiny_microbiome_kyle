@@ -195,6 +195,26 @@ for_tax_df <- as.data.frame(split_taxa)
 for_tax_df_unique <- for_tax_df %>%
   distinct()
 
+#deal with NA values at the GENUS level
+for_tax_df_unique <- for_tax_df_unique %>% 
+  mutate(
+    Genus = case_when(
+      is.na(Genus) | toupper(trimws(Genus)) == "NA" ~ paste0(Family, "(F)_NA"),
+      TRUE ~ as.character(Genus)
+    )
+  )
+
+#now do the same for Family
+for_tax_df_unique <- for_tax_df_unique %>% 
+  mutate(
+    Family = case_when(
+      is.na(Family) | toupper(trimws(Family)) == "NA" ~ paste0(Order, "(O)_NA"),
+      TRUE ~ as.character(Family)
+    )
+  )
+
+
+
 for_tax_df_unique <- for_tax_df_unique %>%
   tibble::column_to_rownames("otu_id")
 

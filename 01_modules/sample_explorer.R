@@ -6,7 +6,7 @@ sample_explorer_ui <- function(id) {
   layout_sidebar(
     sidebar = sidebar(
       width = 280,
-      textInput(ns("sample_id"), "Enter 4-digit Sample ID:", value = ""),
+      textInput(ns("sample_id"), "Enter Sample ID (3 or 4 digits):", value = ""),
       selectInput(
         ns("tax_level"), 
         "Taxonomic Level:", 
@@ -15,61 +15,56 @@ sample_explorer_ui <- function(id) {
       selectInput(
         ns("top_n"), 
         "Show top taxa:", 
-        choices = c("Top 5" = 5, "Top 10" = 10, "Top 20" = 20),  # ✅ Updated choices
-        selected = 10  # ✅ Default to "Top 10"
+        choices = c("Top 5" = 5, "Top 10" = 10, "Top 20" = 20),
+        selected = 10
       ),
-      actionButton(ns("go"), "Show Results", class = "btn-primary")
-      
+      actionButton(ns("go"), "Show Results", class = "btn-primary"),
+      # Hidden input to receive clicked taxon — properly hidden
+      div(
+        textInput(ns("clicked_taxon"), label = NULL, value = ""),
+        style = "display: none;"
+      )
     ),
     plotOutput(ns("taxa_plot")),
     DTOutput(ns("taxa_table"))
   )
-  
 }
-
 
 sample_explorer_server <- function(id, ps) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    current_tax_level_reactive <- reactiveVal(NULL)
+    
     sample_taxa <- eventReactive(input$go, {
       short_id <- input$sample_id
       
-      # Validate: must be 4 digits
-      if (nchar(short_id) != 4 || !grepl("^[0-9]{4}$", short_id)) {
-        showNotification("Please enter exactly 4 digits (e.g., 1234).", type = "warning")
+      # NEW validation: allow 3 or 4 digits
+      if (!grepl("^[0-9]{3,4}$", short_id)) {
+        showNotification("Please enter 3 or 4 digits (e.g., 123 or 1234).", type = "warning")
         return(NULL)
       }
       
-      # 🔑 Reconstruct full sample ID
       full_id <- paste0("ESSE.222.", short_id)
       
-      # Check if full_id exists in phyloseq object
       if (!full_id %in% sample_names(ps)) {
         showNotification(paste("Sample", full_id, "not found!"), type = "error")
         return(NULL)
       }
       
-      # Get counts for this sample
       sample_otu <- otu_table(ps)[, full_id, drop = FALSE]
       tax_df <- as.data.frame(tax_table(ps))
       
-      # Merge OTU + taxonomy
       df <- data.frame(
         taxon = rownames(sample_otu),
-        count = as.numeric(sample_otu[, 1]),
+        relative_abundance = as.numeric(sample_otu[, 1]),
         stringsAsFactors = FALSE
       )
       df <- cbind(df, tax_df[match(df$taxon, rownames(tax_df)), , drop = FALSE])
-      
-      # Handle missing taxonomy gracefully
       df[is.na(df)] <- ""
       
-      # Create display label based on taxonomic level
       if (input$tax_level == "Species") {
-        # Combine Genus and Species, but handle cases where Genus is missing
         df$display_label <- trimws(paste(df$Genus, df$Species))
-        # Optional: clean up if both are empty or just whitespace
         df$display_label[df$display_label == ""] <- "Unknown"
         group_var <- "display_label"
       } else {
@@ -77,64 +72,159 @@ sample_explorer_server <- function(id, ps) {
         df$display_label <- df[[group_var]]
       }
       
-      # Aggregate by display_label
       df_agg <- df %>%
         group_by(display_label) %>%
-        summarise(count = sum(count), .groups = "drop") %>%
+        summarise(relative_abundance = sum(relative_abundance), .groups = "drop") %>%
         filter(display_label != "" & !is.na(display_label)) %>%
-        arrange(desc(count))
+        arrange(desc(relative_abundance))
       
-      # Top N
       df_agg <- head(df_agg, as.numeric(input$top_n))
       
-      # Store the taxonomic level used for this result
       df_agg$used_tax_level <- input$tax_level
-      
-      # Rename column for consistency in plot/table labels
       colnames(df_agg)[colnames(df_agg) == "display_label"] <- input$tax_level
+      
+      current_tax_level_reactive(input$tax_level)
       
       df_agg
     })
     
     output$taxa_plot <- renderPlot({
       req(sample_taxa())
-      
-      # Use the taxonomic level that was used when the data was generated
-      current_tax_level <- sample_taxa()$used_tax_level[1]  # All rows have the same level
-      
-      # If current_tax_level is NULL or different from input$tax_level, don't render
-      # Only render if the tax level matches what was used to generate the data
-      if(is.null(current_tax_level) || current_tax_level != input$tax_level) {
-        # Don't render anything until the button is pressed again
+      current_tax_level <- sample_taxa()$used_tax_level[1]
+      if (is.null(current_tax_level) || current_tax_level != input$tax_level) {
         return(NULL)
       }
       
-      ggplot(sample_taxa(), aes(x = reorder(!!sym(input$tax_level), count), y = count)) +
+      # Precompute the label (optional but cleaner)
+      # You may want to round or format the values for readability
+      plot_data <- sample_taxa() %>%
+        mutate(
+          label = round(relative_abundance, digits = 3),  # adjust digits as needed
+          taxon = reorder(!!sym(input$tax_level), relative_abundance)
+        )
+      
+      ggplot(plot_data, aes(x = taxon, y = relative_abundance)) +
         geom_col(fill = "#45B29D") +
+        geom_text(
+          aes(label = ifelse(relative_abundance > 0.03, label, "")),  # only show if >2%
+          hjust = 1.1,          # places text just inside the right edge of each bar
+          color = "white",      # contrast well with your bar color
+          fontface = "bold",
+          size = 3.5
+        ) +
         coord_flip() +
         labs(
           x = ifelse(input$tax_level == "Species", "Genus Species", input$tax_level),
           y = "Relative Abundance",
-          title = paste("Top Taxa in Sample")
+          title = "Top Taxa in Sample"
         ) +
-        theme_minimal()
+        theme_minimal() +
+        theme(
+          axis.text.x = element_text(size = 9),
+          axis.text.y = element_text(size = 9)
+        )
     })
     
     output$taxa_table <- renderDT({
       req(sample_taxa())
-      
-      # Only render if the tax level matches what was used to generate the data
-      current_tax_level <- sample_taxa()$used_tax_level[1]  # All rows have the same level
-      
-      if(is.null(current_tax_level) || current_tax_level != input$tax_level) {
-        # Return an empty table until the button is pressed again
+      current_tax_level <- sample_taxa()$used_tax_level[1]
+      if (is.null(current_tax_level) || current_tax_level != input$tax_level) {
         return(datatable(data.frame(), options = list(pageLength = 10)))
       }
       
-      datatable(sample_taxa(), options = list(
-        dom = 'Bfrtip'  # removed 'l'
-      )) %>%
-        formatRound(columns = "count", digits = 4)
+      df_clean <- sample_taxa() %>%
+        select(-used_tax_level)
+      
+      # Add "Compare" button column as HTML
+      df_clean$compare <- sprintf(
+        '<button type="button" class="btn btn-xs btn-outline-secondary" data-taxon="%s">%s Compare</button>',
+        gsub('"', '\\"', df_clean[[input$tax_level]]),
+        as.character(shiny::icon("search"))
+      )
+      
+      datatable(
+        df_clean,
+        escape = FALSE,
+        options = list(
+          dom = 'Bfrtip',
+          pageLength = 10,
+          columnDefs = list(
+            list(orderable = FALSE, targets = ncol(df_clean))  # last column = button
+          )
+        ),
+        callback = JS(paste0("
+          table.on('click', 'button', function() {
+            var taxon = $(this).data('taxon');
+            Shiny.setInputValue('", ns("clicked_taxon"), "', taxon);
+          });
+        "))
+      ) %>%
+        formatRound(columns = "relative_abundance", digits = 6)
+    })
+    
+    # Observe clicks via hidden input
+    observeEvent(input$clicked_taxon, {
+      req(input$clicked_taxon != "")
+      
+      local_taxon <- input$clicked_taxon
+      tax_level <- isolate(current_tax_level_reactive())
+      
+      if (is.null(tax_level)) {
+        showNotification("Please run the analysis first.", type = "warning")
+        return()
+      }
+      
+      # Map OTUs to taxonomy
+      tax_df_full <- as.data.frame(tax_table(ps), stringsAsFactors = FALSE)
+      rownames(tax_df_full) <- taxa_names(ps)
+      
+      # Find matching OTUs
+      if (tax_level == "Species") {
+        combined <- trimws(paste(tax_df_full$Genus, tax_df_full$Species))
+        matches <- combined == local_taxon
+        if (local_taxon == "Unknown") {
+          matches <- (tax_df_full$Genus == "" | is.na(tax_df_full$Genus)) &
+            (tax_df_full$Species == "" | is.na(tax_df_full$Species))
+        }
+      } else {
+        matches <- tax_df_full[[tax_level]] == local_taxon
+      }
+      
+      matching_otus <- rownames(tax_df_full)[matches]
+      matching_otus <- matching_otus[matching_otus %in% taxa_names(ps)]
+      
+      if (length(matching_otus) == 0) {
+        showNotification("No OTUs match this taxon.", type = "warning")
+        return()
+      }
+      
+      # Get relative abundances across all samples
+      otu_mat <- otu_table(ps)
+      rel_abund_per_sample <- colSums(otu_mat[matching_otus, , drop = FALSE])
+      result_df <- data.frame(
+        sample_id = names(rel_abund_per_sample),
+        relative_abundance = as.numeric(rel_abund_per_sample),
+        stringsAsFactors = FALSE
+      ) %>%
+        filter(relative_abundance > 0) %>%
+        arrange(desc(relative_abundance))
+      
+      if (nrow(result_df) == 0) {
+        showNotification("This taxon is absent from all samples.", type = "info")
+        return()
+      }
+      
+      showModal(modalDialog(
+        title = paste("Samples containing:", local_taxon),
+        size = "l",
+        DTOutput(ns("compare_table")),
+        footer = modalButton("Close")
+      ))
+      
+      output$compare_table <- renderDT({
+        datatable(result_df, options = list(dom = 'Bfrtip',pageLength = 10)) %>%
+          formatRound(columns = "relative_abundance", digits = 6)
+      })
     })
   })
 }

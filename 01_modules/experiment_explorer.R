@@ -210,28 +210,51 @@ experiment_explorer_server <- function(id, ps) {
     # Render plot using the namespaced output ID
     output$taxa_plot <- renderPlot({
       cat("DEBUG: renderPlot called. req(results$ready)...\n")
-      req(results$ready)  # Only depends on results$ready
-      cat("DEBUG: renderPlot - data available. nrow:",
-          nrow(results$plot_data),
-          "\n")
+      req(results$ready)
+      cat("DEBUG: renderPlot - data available. nrow:", nrow(results$plot_data), "\n")
       
       df_clean <- results$plot_data
       sample_id <- results$sample_id
       tax_level <- results$tax_level
       
+      # Optional: guard against empty/no-data case (helps avoid cryptic errors)
+      if (nrow(df_clean) == 0) {
+        return(ggplot() + 
+                 annotate("text", x = 0.5, y = 0.5, label = "No data to display", size = 5) +
+                 theme_void())
+      }
+      
+      # Preprocess: create label (rounded) and explicitly define the ordered factor
+      df_clean <- df_clean %>%
+        mutate(
+          label = round(relative_abundance, digits = 3),
+          TaxonLabel_ordered = reorder(TaxonLabel, relative_abundance)
+        )
+      
       p <- ggplot(df_clean, aes(
-        x = reorder(TaxonLabel, relative_abundance),
-        y = relative_abundance
-      )) +  # Use correct column name
+        x = TaxonLabel_ordered,
+        y = relative_abundance,
+        label = label  # make label available in aesthetics
+      )) +
         geom_col(fill = "#2c7bb6") +
+        geom_text(
+          # Place text *inside* bars, near the right edge
+          aes(label = ifelse(relative_abundance >= 0.03, label, "")),
+          hjust = 1.05,        # slightly beyond bar end (visually inside due to flip)
+          color = "white",     # high contrast on blue
+          fontface = "bold",
+          size = 3,
+          na.rm = TRUE         # skip if label is NA
+        ) +
         coord_flip() +
         labs(
           x = "Taxon",
           y = "Relative Abundance",
-          # Update y-axis label
           title = paste("Top", nrow(df_clean), tax_level, "in Sample:", sample_id)
         ) +
-        theme_minimal(base_size = 10)
+        theme_minimal(base_size = 10) +
+        # Optional: improve spacing so labels don’t get cut off
+        scale_x_discrete(expand = expansion(mult = c(0, 0.15)))
       
       print(p)
     })
