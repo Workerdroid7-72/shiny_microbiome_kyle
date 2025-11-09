@@ -26,13 +26,20 @@ experiment_explorer_ui <- function(id) {
       ),
       selectInput(ns("experiment"), "Select Experiment", choices = NULL),
       uiOutput(ns("sample_ui")),
-      actionButton(ns("apply_btn"), "Show Results", class = "btn-primary")
+      actionButton(ns("apply_btn"), "Show Results", class = "btn-primary"),
+       hr(),  # optional separator
+      htmlOutput(ns("sample_metadata")),
+      
+      
+      # Hidden input to receive clicked taxon — properly hidden
+      div(
+        textInput(ns("clicked_taxon"), label = NULL, value = ""),
+        style = "display: none;"
+      )
     ),
-    # plotOutput(NS(id, "taxa_plot"), height = "400px"),
-    # DTOutput(NS(id, "taxa_table"))
+    
     plotOutput(ns("taxa_plot"), height = "400px"),
-    # Namespaced
-    DTOutput(ns("taxa_table"))                      # Namespaced
+    DTOutput(ns("taxa_table"))                      
   )
 }
 
