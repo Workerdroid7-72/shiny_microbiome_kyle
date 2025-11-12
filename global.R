@@ -4,6 +4,7 @@ library(shiny)
 library(bslib)
 library(phyloseq)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(DT)
 
