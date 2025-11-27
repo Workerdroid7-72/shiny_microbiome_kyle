@@ -211,6 +211,75 @@ sample_explorer_server <- function(id, ps) {
     })
    
     # 🟣 Stacked bar (mosaic-style)
+    # output$plot_stacked <- renderPlot({
+    #   req(sample_taxa())
+    #   current_tax_level <- sample_taxa()$used_tax_level[1]
+    #   if (is.null(current_tax_level) || current_tax_level != input$tax_level) return(NULL)
+    #   
+    #   plot_data <- sample_taxa() %>%
+    #     mutate(
+    #       taxon = !!sym(input$tax_level)
+    #     ) %>%
+    #     arrange(desc(relative_abundance))
+    #   
+    #   # Precompute label positions and visibility
+    #   plot_data <- plot_data %>%
+    #     mutate(
+    #       cum_right = cumsum(relative_abundance),         # right edge
+    #       cum_left  = cum_right - relative_abundance,    # left edge
+    #       mid_x     = (cum_left + cum_right) / 2,        # center of segment
+    #       label_pct = scales::percent(relative_abundance, accuracy = 0.1),
+    #       show_label = relative_abundance >= 0.04        # ~4% threshold
+    #     )
+    #   
+    #   ggplot(plot_data, aes(y = "", x = relative_abundance, fill = taxon)) +
+    #     # Main bars
+    #     geom_col(
+    #       width = 0.6,  # thinner bar for breathing room
+    #       color = "white",
+    #       size = 0.5
+    #     ) +
+    #     
+    #     # Labels: placed in center of each segment, only if large enough
+    #     # geom_text(
+    #     #   aes(
+    #     #     x = mid_x,
+    #     #     label = ifelse(show_label, label_pct, "")
+    #     #   ),
+    #     #   hjust = 0.5,
+    #     #   vjust = 0.5,
+    #     #   color = "white",
+    #     #   fontface = "bold",
+    #     #   size = 3.2
+    #     # ) +
+    #     
+    #     scale_x_continuous(
+    #       expand = expansion(mult = c(0, 0.02)),  # no left padding, small right buffer
+    #       labels = scales::percent
+    #     ) +
+    #     scale_fill_brewer(
+    #       palette = if (nrow(plot_data) <= 6) "Dark2" else if (nrow(plot_data) <= 8) "Set2" else "Paired",
+    #       name = input$tax_level
+    #     ) +
+    #     
+    #     labs(
+    #       x = "Relative Abundance",
+    #       y = NULL,
+    #       title = "Taxonomic Composition (Stacked Bar)"
+    #     ) +
+    #     
+    #     theme_minimal(base_size = 10) +
+    #     theme(
+    #       axis.text.y = element_blank(),
+    #       axis.ticks.y = element_blank(),
+    #       panel.grid.major.y = element_blank(),
+    #       panel.grid.minor.y = element_blank(),
+    #       plot.margin = margin(10, 15, 10, 10),  # top, right, bottom, left (pt)
+    #       legend.position = "right"
+    #     )
+    # })
+    
+    # 🟣 Stacked bar (mosaic-style)
     output$plot_stacked <- renderPlot({
       req(sample_taxa())
       current_tax_level <- sample_taxa()$used_tax_level[1]
@@ -231,6 +300,19 @@ sample_explorer_server <- function(id, ps) {
           label_pct = scales::percent(relative_abundance, accuracy = 0.1),
           show_label = relative_abundance >= 0.04        # ~4% threshold
         )
+      
+      # Generate colors: use a palette that can handle many categories
+      n_taxa <- nrow(plot_data)
+      if (n_taxa <= 12) {
+        # Use brewer palette for smaller numbers
+        colors <- RColorBrewer::brewer.pal(
+          n = if (n_taxa <= 3) 3 else if (n_taxa <= 8) 8 else 12,
+          name = if (n_taxa <= 8) "Set2" else "Paired"
+        )[1:n_taxa]
+      } else {
+        # Use viridis for larger numbers (works well with many categories)
+        colors <- viridisLite::viridis(n_taxa)
+      }
       
       ggplot(plot_data, aes(y = "", x = relative_abundance, fill = taxon)) +
         # Main bars
@@ -257,8 +339,8 @@ sample_explorer_server <- function(id, ps) {
           expand = expansion(mult = c(0, 0.02)),  # no left padding, small right buffer
           labels = scales::percent
         ) +
-        scale_fill_brewer(
-          palette = if (nrow(plot_data) <= 6) "Dark2" else if (nrow(plot_data) <= 8) "Set2" else "Paired",
+        scale_fill_manual(
+          values = colors,
           name = input$tax_level
         ) +
         
